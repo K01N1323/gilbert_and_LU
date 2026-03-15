@@ -4,10 +4,12 @@ class matrixes{
 public:
     matrixes(int, int);
     matrixes(double*, int, int);
-    double* Get(int)const;
+    double Get(int)const;
     double* GetMatrix()const;
     double GetDet()const;
     double* GetInverseMatrix()const;
+    int GetRows() const;
+    int GetCols() const;
     void MakeGilbert();
     void MakeOnes();
     const matrixes operator+(const matrixes &rv)const;

@@ -1,5 +1,6 @@
 #include "matrixes.h"
 #include <cmath>
+#include "gilbert.h"
 
 matrixes::matrixes(int rows, int cols) : matrixes(nullptr, rows, cols) {}
 matrixes::matrixes(double *data, int rows, int cols) : rows(rows), cols(cols){
@@ -23,8 +24,10 @@ matrixes::~matrixes(){
     }
 }
 
-double matrixes:: double Get(int index) const {return *(matrix + index);}
+double matrixes::Get(int index) const {return *(matrix + index);}
 double* matrixes::GetMatrix()const { return matrix;}
+int matrixes::GetRows() const { return rows; }
+int matrixes::GetCols() const { return cols; }
 void matrixes::MakeGilbert(){
     if (rows != cols) {return;}
     for (int i = 0; i < rows; i++){
