@@ -9,6 +9,8 @@ LU_Decomposition::LU_Decomposition(double *matrix_data, int n) {
   L = new double[n * n];
   U = new double[n * n];
   P = new int[n];
+  x = new double[n];
+  y = new double[n];
 
   for (int i = 0; i < n; i++) {
     P[i] = i;
@@ -29,6 +31,8 @@ LU_Decomposition::~LU_Decomposition() {
   delete[] L;
   delete[] U;
   delete[] P;
+  delete[] x;
+  delete[] y;
 }
 
 int LU_Decomposition::neededrow(int skip) const {
@@ -103,11 +107,8 @@ double LU_Decomposition::GetDet() const {
 }
 
 double *LU_Decomposition::Solve(double *b) const {
-  double *y = new double[n];
-  double *x = new double[n];
-
   for (int i = 0; i < n; i++) {
-    y[i] = b[i];
+    y[i] = b[P[i]];
     for (int j = 0; j < i; j++) {
       y[i] -= L[i * n + j] * y[j];
     }
@@ -121,6 +122,22 @@ double *LU_Decomposition::Solve(double *b) const {
     x[i] /= U[i * n + i];
   }
 
-  delete[] y;
   return x;
+}
+
+void LU_Decomposition::SolveForTests(double *b) const {
+  for (int i = 0; i < n; i++) {
+    y[i] = b[P[i]];
+    for (int j = 0; j < i; j++) {
+      y[i] -= L[i * n + j] * y[j];
+    }
+  }
+
+  for (int i = n - 1; i >= 0; i--) {
+    x[i] = y[i];
+    for (int j = i + 1; j < n; j++) {
+      x[i] -= U[i * n + j] * x[j];
+    }
+    x[i] /= U[i * n + i];
+  }
 }

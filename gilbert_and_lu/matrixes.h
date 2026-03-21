@@ -1,25 +1,28 @@
 #ifndef MATRIXES_H
 #define MATRIXES_H
-class matrixes{
+class matrixes {
 public:
-    matrixes(int, int);
-    matrixes(double*, int, int);
-    double Get(int)const;
-    double* GetMatrix()const;
-    double GetDet()const;
-    double* GetInverseMatrix()const;
-    int GetRows() const;
-    int GetCols() const;
-    void MakeGilbert();
-    void MakeOnes();
-    const matrixes operator+(const matrixes &rv)const;
-    const matrixes operator-(const matrixes &rv)const;
-    const matrixes operator*(const matrixes &rv)const;
-    ~matrixes();
+  matrixes(int, int);
+  matrixes(double *, int, int);
+  double GetIJ(int, int) const;
+  double Get(int) const;
+  double *GetMatrix() const;
+  double GetDet() const;
+  double *GetInverseMatrix() const;
+  int GetRows() const;
+  int GetCols() const;
+  void MakeGilbert();
+  void MakeOnes();
+  void MakeRandomNormal();
+  const matrixes operator+(const matrixes &rv) const;
+  const matrixes operator-(const matrixes &rv) const;
+  const matrixes operator*(const matrixes &rv) const;
+  ~matrixes();
+
 private:
-    int rows;
-    int cols;
-    double *matrix;
-    const double SubstrRowCol(const matrixes &rv, int, int)const;
+  int rows;
+  int cols;
+  double *matrix;
+  const double SubstrRowCol(const matrixes &rv, int, int) const;
 };
 #endif // matrixes_h

@@ -15,6 +15,7 @@ public:
   double GetDet() const;
 
   double *Solve(double *b) const;
+  void SolveForTests(double *b) const;
 
 private:
   int n;
@@ -23,6 +24,9 @@ private:
   double *U;
   int *P;
   int swaps;
+
+  double *x;
+  double *y;
 
   int neededrow(int skip) const;
 

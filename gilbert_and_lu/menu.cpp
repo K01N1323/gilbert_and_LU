@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "LU_decompozition.h"
-#include "gilbert.h"
+#include "gauss_method.h"
 #include "matrixes.h"
 #include "menu.h"
 
@@ -17,8 +17,7 @@ void PrintInfo() {
   cout << "1 - Создать матрицу" << endl;
   cout << "2 - Заполнить матрицей гильберта" << endl;
   cout << "3 - Заполнить единичной матрицей" << endl;
-  cout << "4 - Посчитать обратную матрицу методом Гаусса с выбором ведущего "
-          "элемента"
+  cout << "4 - Решить СЛАУ методом Гаусса с выбором ведущего элемента  "
        << endl;
   cout << "5 - Решить СЛАУ LU разложением " << endl;
   cout << "6 - Сетнуть элемент матрицы" << endl;
@@ -103,17 +102,28 @@ void open_menu() {
           cout << "ОШИБКА: Матрица должна быть квадратной" << endl;
           break;
         }
-        double det = matrices[index]->GetDet();
-        if (std::abs(det) < 1e-9) {
-          cout << "ОШИБКА: Матрица вырождена, обратной не существует." << endl;
-          break;
-        }
-        double *inv = matrices[index]->GetInverseMatrix();
-        cout << "Обратная матрица (метод Гаусса): " << endl;
         int n = matrices[index]->GetRows();
-        matrixes tmp(inv, n, n);
-        Print_Matrix(&tmp);
-        delete[] inv;
+
+        cout << "Введите " << n << " элементов вектора свободных членов b: ";
+        double *b = new double[n];
+        for (int i = 0; i < n; i++) {
+          cin >> b[i];
+        }
+
+        gauss_method gm(matrices[index]->GetMatrix(), n);
+
+        double *x = gm.Solve(b);
+        if (x) {
+          cout << "Решение СЛАУ методом Гаусса (вектор x): " << endl;
+          for (int i = 0; i < n; i++) {
+            cout << x[i] << " ";
+          }
+          cout << endl;
+          delete[] x;
+        } else {
+          cout << "ОШИБКА: Не удалось получить решение СЛАУ." << endl;
+        }
+        delete[] b;
       } else {
         cout << "Неверный индекс" << endl;
       }
@@ -139,24 +149,24 @@ void open_menu() {
         LU_Decomposition lu(matrices[index]->GetMatrix(), n);
         double det = lu.GetDet();
         if (std::abs(det) < 1e-9) {
-          cout << "ОШИБКА: Матрица вырождена (определитель близок к 0)." << endl;
+          cout << "ОШИБКА: Матрица вырождена (определитель близок к 0)."
+               << endl;
           delete[] b;
           break;
         }
 
-        // Вызоввашего метода (предполагается, что он называется Solve, принимает double* и возвращает double*)
-        // Если ваш метод называется иначе, переименуйте Solve ниже:
-        double* x = lu.Solve(b);
+        double *x = lu.Solve(b);
 
         if (x) {
-            cout << "Решение СЛАУ (вектор x): " << endl;
-            for (int i = 0; i < n; i++) {
-                cout << x[i] << " ";
-            }
-            cout << endl;
-            delete[] x; // предполагается, что метод возвращает динамический массив 
+          cout << "Решение СЛАУ (вектор x): " << endl;
+          for (int i = 0; i < n; i++) {
+            cout << x[i] << " ";
+          }
+          cout << endl;
+          delete[] x; // предполагается, что метод возвращает динамический
+                      // массив
         } else {
-            cout << "ОШИБКА: Не удалось получить решение СЛАУ." << endl;
+          cout << "ОШИБКА: Не удалось получить решение СЛАУ." << endl;
         }
 
         delete[] b;
