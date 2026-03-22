@@ -316,4 +316,56 @@ void run_all_tests() {
   cout << "Время для метода Гаусса: " << t100_.lu_time << endl;
   cout << "Время для LU разложения: " << t100_.solve_time << endl;
   cout << endl;
+
+  cout << "Тестирование невязки и относительной погрешности для Метода Гаусса"
+       << endl;
+  cout << "Для n = 5" << endl;
+  ExecutionTime t5 = Gilbert_tests_for_default_gauss(5);
+  cout << "Отностительная погрешность: " << t5.lu_time << endl;
+  cout << "Невязка: " << t5.solve_time << endl;
+
+  cout << "Для n = 10" << endl;
+  ExecutionTime t10_ = Gilbert_tests_for_default_gauss(10);
+  cout << "Отностительная погрешность: " << t10_.lu_time << endl;
+  cout << "Невязка: " << t10_.solve_time << endl;
+
+  cout << "Для n = 10" << endl;
+  ExecutionTime t15 = Gilbert_tests_for_default_gauss(15);
+  cout << "Отностительная погрешность: " << t15.lu_time << endl;
+  cout << "Невязка: " << t15.solve_time << endl;
+
+  cout << "Тестирование невязки и относительной погрешности для Метода Гаусса "
+          "c выбором ведушего элемента"
+       << endl;
+  cout << "Для n = 5" << endl;
+  t5 = Gilbert_tests_for_gauss(5);
+  cout << "Отностительная погрешность: " << t5.lu_time << endl;
+  cout << "Невязка: " << t5.solve_time << endl;
+
+  cout << "Для n = 10" << endl;
+  t10_ = Gilbert_tests_for_gauss(10);
+  cout << "Отностительная погрешность: " << t10_.lu_time << endl;
+  cout << "Невязка: " << t10_.solve_time << endl;
+
+  cout << "Для n = 10" << endl;
+  t15 = Gilbert_tests_for_gauss(15);
+  cout << "Отностительная погрешность: " << t15.lu_time << endl;
+  cout << "Невязка: " << t15.solve_time << endl;
+
+  cout << "Тестирование невязки и относительной погрешности для Lu разложения "
+       << endl;
+  cout << "Для n = 5" << endl;
+  t5 = Gilbert_tests_for_lu(5);
+  cout << "Отностительная погрешность: " << t5.lu_time << endl;
+  cout << "Невязка: " << t5.solve_time << endl;
+
+  cout << "Для n = 10" << endl;
+  t10_ = Gilbert_tests_for_lu(10);
+  cout << "Отностительная погрешность: " << t10_.lu_time << endl;
+  cout << "Невязка: " << t10_.solve_time << endl;
+
+  cout << "Для n = 10" << endl;
+  t15 = Gilbert_tests_for_lu(15);
+  cout << "Отностительная погрешность: " << t15.lu_time << endl;
+  cout << "Невязка: " << t15.solve_time << endl;
 }

@@ -1,5 +1,6 @@
 #include "gauss_method.h"
 #include <cmath>
+#include <vector>
 
 gauss_method::gauss_method(double *m, int n) {
   matrix = new double[n * n];
@@ -48,8 +49,8 @@ int gauss_method::neededrow(int skip) const { // по дефолту скип р
 
 void gauss_method::swaprows(int we_swap1) {
   int we_swap = neededrow(we_swap1);
-  double loc[n];
-  double loccon[n];
+  std::vector<double> loc(n);
+  std::vector<double> loccon(n);
   swaps++;
   if (we_swap1 == we_swap)
     return;
@@ -80,8 +81,8 @@ void gauss_method::divisionrow(int num) {
 }
 
 void gauss_method::subtraction(int current) {
-  double loc[n];
-  double loccon[n];
+  std::vector<double> loc(n);
+  std::vector<double> loccon(n);
   for (int i = 0; i < n; i++) {
     loc[i] = *(matrix + current * n + i);
     loccon[i] = *(conmatrix + current * n + i);

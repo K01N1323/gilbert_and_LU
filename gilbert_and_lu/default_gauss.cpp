@@ -1,5 +1,6 @@
 #include "default_gauss.h"
 #include <cmath>
+#include <vector> // Добавлено для std::vector
 
 default_gauss::default_gauss(double *m, int n) {
   matrix = new double[n * n];
@@ -48,8 +49,11 @@ int default_gauss::neededrow(int skip) const { // по дефолту скип �
 
 void default_gauss::swaprows(int we_swap1) {
   int we_swap = neededrow(we_swap1);
-  double loc[n];
-  double loccon[n];
+
+  // Замена массивов переменной длины на std::vector
+  std::vector<double> loc(n);
+  std::vector<double> loccon(n);
+
   swaps++;
   if (we_swap1 == we_swap)
     return;
@@ -80,8 +84,10 @@ void default_gauss::divisionrow(int num) {
 }
 
 void default_gauss::subtraction(int current) {
-  double loc[n];
-  double loccon[n];
+  // Замена массивов переменной длины на std::vector
+  std::vector<double> loc(n);
+  std::vector<double> loccon(n);
+
   for (int i = 0; i < n; i++) {
     loc[i] = *(matrix + current * n + i);
     loccon[i] = *(conmatrix + current * n + i);
@@ -96,12 +102,9 @@ void default_gauss::subtraction(int current) {
 }
 
 void default_gauss::triangle() {
-  int skip = -1;
   for (int i = 0; i < n; i++) {
-    skip++;
-    swaprows(skip);
-    divisionrow(skip);
-    subtraction(skip);
+    divisionrow(i);
+    subtraction(i);
   }
 }
 
