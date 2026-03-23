@@ -2,8 +2,8 @@
 #include "tests.h"
 
 int main() {
-  run_all_tests();
-  open_menu();
+    run_all_tests();
+    open_menu();
 
-  return 0;
+    return 0;
 }

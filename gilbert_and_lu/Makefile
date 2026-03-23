@@ -1,9 +1,9 @@
 CXX = clang++
-CXXFLAGS = -std=c++17 -Wall
+CXXFLAGS = -std=c++17 -Wall -Iinclude
 
-SRCS = main.cpp menu.cpp gauss_method.cpp LU_decompozition.cpp matrixes.cpp tests.cpp default_gauss.cpp
+SRCS = src/main.cpp src/menu.cpp src/gauss_method.cpp src/LU_decompozition.cpp src/matrixes.cpp src/tests.cpp src/default_gauss.cpp
 OBJS = $(SRCS:.cpp=.o)
-HDRS = $(wildcard *.h)
+HDRS = $(wildcard include/*.h)
 TARGET = main
 
 all: $(TARGET)
@@ -11,7 +11,7 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(TARGET)
 
-%.o: %.cpp $(HDRS)
+src/%.o: src/%.cpp $(HDRS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:

@@ -2,6 +2,7 @@
 #include <algorithm> // для std::swap
 #include <cmath>
 
+// Конструктор: выделяет память и выполняет декомпозицию
 LU_Decomposition::LU_Decomposition(double *matrix_data, int n) {
   this->n = n;
   this->swaps = 0;
@@ -14,6 +15,7 @@ LU_Decomposition::LU_Decomposition(double *matrix_data, int n) {
 
   for (int i = 0; i < n; i++) {
     P[i] = i;
+
     for (int j = 0; j < n; j++) {
       U[i * n + j] = matrix_data[i * n + j];
 
@@ -24,9 +26,11 @@ LU_Decomposition::LU_Decomposition(double *matrix_data, int n) {
       }
     }
   }
+
   decompose();
 }
 
+// Деструктор: освобождает выделенную память
 LU_Decomposition::~LU_Decomposition() {
   delete[] L;
   delete[] U;
@@ -35,24 +39,30 @@ LU_Decomposition::~LU_Decomposition() {
   delete[] y;
 }
 
+// Ищет максимальный по модулю ведущий элемент в текущем столбце
 int LU_Decomposition::neededrow(int skip) const {
   double mx = std::abs(U[skip * n + skip]);
   int numrow = skip;
+
   for (int i = skip + 1; i < n; i++) {
     double loc = std::abs(U[i * n + skip]);
+
     if (loc > mx) {
       mx = loc;
       numrow = i;
     }
   }
+
   return numrow;
 }
 
+// Переставляет строки для устойчивости алгоритма
 void LU_Decomposition::swaprows(int step) {
   int we_swap = neededrow(step);
 
-  if (step == we_swap)
+  if (step == we_swap) {
     return;
+  }
 
   swaps++;
 
@@ -67,11 +77,13 @@ void LU_Decomposition::swaprows(int step) {
   }
 }
 
+// Вычитает строки и формирует L и U
 void LU_Decomposition::subtraction(int current) {
   double pivot = U[current * n + current];
 
-  if (std::abs(pivot) < 1e-9)
+  if (std::abs(pivot) < 1e-9) {
     return;
+  }
 
   for (int k = current + 1; k < n; k++) {
     double mnozh = U[k * n + current] / pivot;
@@ -83,6 +95,7 @@ void LU_Decomposition::subtraction(int current) {
   }
 }
 
+// Основной цикл LU-разложения
 void LU_Decomposition::decompose() {
   for (int i = 0; i < n - 1; i++) {
     swaprows(i);
@@ -90,12 +103,19 @@ void LU_Decomposition::decompose() {
   }
 }
 
+// Возвращает матрицу L
 double *LU_Decomposition::GetL() const { return L; }
+
+// Возвращает матрицу U
 double *LU_Decomposition::GetU() const { return U; }
+
+// Возвращает массив перестановок
 int *LU_Decomposition::GetP() const { return P; }
 
+// Вычисляет и возвращает определитель матрицы
 double LU_Decomposition::GetDet() const {
   double det = 1.0;
+
   for (int i = 0; i < n; i++) {
     det *= U[i * n + i];
   }
@@ -103,12 +123,15 @@ double LU_Decomposition::GetDet() const {
   if (swaps % 2 != 0) {
     det = -det;
   }
+
   return det;
 }
 
+// Решает СЛАУ: сначала LY = Pb, затем UX = Y
 double *LU_Decomposition::Solve(double *b) const {
   for (int i = 0; i < n; i++) {
     y[i] = b[P[i]];
+
     for (int j = 0; j < i; j++) {
       y[i] -= L[i * n + j] * y[j];
     }
@@ -116,18 +139,22 @@ double *LU_Decomposition::Solve(double *b) const {
 
   for (int i = n - 1; i >= 0; i--) {
     x[i] = y[i];
+
     for (int j = i + 1; j < n; j++) {
       x[i] -= U[i * n + j] * x[j];
     }
+
     x[i] /= U[i * n + i];
   }
 
   return x;
 }
 
+// Решение СЛАУ без возврата ответа (для тестов скорости)
 void LU_Decomposition::SolveForTests(double *b) const {
   for (int i = 0; i < n; i++) {
     y[i] = b[P[i]];
+
     for (int j = 0; j < i; j++) {
       y[i] -= L[i * n + j] * y[j];
     }
@@ -135,9 +162,11 @@ void LU_Decomposition::SolveForTests(double *b) const {
 
   for (int i = n - 1; i >= 0; i--) {
     x[i] = y[i];
+
     for (int j = i + 1; j < n; j++) {
       x[i] -= U[i * n + j] * x[j];
     }
+
     x[i] /= U[i * n + i];
   }
 }
