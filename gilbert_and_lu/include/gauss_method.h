@@ -1,21 +1,26 @@
 #ifndef SECONDFILE_H
 #define SECONDFILE_H
+
+template <class T>
+class matrixes;
+
+template <class T>
 class gauss_method {
   public:
-    friend class matrixes;
-    gauss_method(double *, int);
-    double *GetMatrix() const;
-    double GetDet() const;
+    friend class matrixes<T>;
+    gauss_method(T *, int);
+    T *GetMatrix() const;
+    T GetDet() const;
     void TakeReverse();
     ~gauss_method();
-    double *Solve(double *b);
-    void SolveForTests(double *b);
+    T *Solve(T *b);
+    void SolveForTests(T *b);
 
   private:
     int n;
-    double *matrix;
-    double *conmatrix;
-    int det;
+    T *matrix;
+    T *conmatrix;
+    T det;
     int swaps;
     int neededrow(int skip) const;
     void swaprows(int);
@@ -24,6 +29,9 @@ class gauss_method {
     void triangle();
     void obrat();
     void reverse();
-    double GetElement(int, int) const;
+    T GetElement(int, int) const;
 };
+
+#include "../src/gauss_method.tpp"
+
 #endif // secondfile

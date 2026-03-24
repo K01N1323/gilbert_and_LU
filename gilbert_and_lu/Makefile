@@ -1,7 +1,7 @@
 CXX = clang++
 CXXFLAGS = -std=c++17 -Wall -Iinclude
 
-SRCS = src/main.cpp src/menu.cpp src/gauss_method.cpp src/LU_decompozition.cpp src/matrixes.cpp src/tests.cpp src/default_gauss.cpp
+SRCS = src/main.cpp src/menu.cpp src/tests.cpp
 OBJS = $(SRCS:.cpp=.o)
 HDRS = $(wildcard include/*.h)
 TARGET = main

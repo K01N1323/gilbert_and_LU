@@ -3,26 +3,31 @@
 #include <cmath>
 
 // Конструктор: выделяет память и выполняет декомпозицию
-LU_Decomposition::LU_Decomposition(double *matrix_data, int n) {
+template <class T>
+LU_Decomposition<T>::LU_Decomposition(T *matrix_data, int n) {
   this->n = n;
   this->swaps = 0;
 
-  L = new double[n * n];
-  U = new double[n * n];
+  L = new T[n * n];
+  U = new T[n * n];
   P = new int[n];
-  x = new double[n];
-  y = new double[n];
+  x = new T[n];
+  y = new T[n];
 
   for (int i = 0; i < n; i++) {
     P[i] = i;
 
     for (int j = 0; j < n; j++) {
-      U[i * n + j] = matrix_data[i * n + j];
+      if (matrix_data != nullptr) {
+        U[i * n + j] = matrix_data[i * n + j];
+      } else {
+        U[i * n + j] = T(0);
+      }
 
       if (i == j) {
-        L[i * n + j] = 1.0;
+        L[i * n + j] = T(1.0);
       } else {
-        L[i * n + j] = 0.0;
+        L[i * n + j] = T(0.0);
       }
     }
   }
@@ -31,7 +36,8 @@ LU_Decomposition::LU_Decomposition(double *matrix_data, int n) {
 }
 
 // Деструктор: освобождает выделенную память
-LU_Decomposition::~LU_Decomposition() {
+template <class T>
+LU_Decomposition<T>::~LU_Decomposition() {
   delete[] L;
   delete[] U;
   delete[] P;
@@ -40,12 +46,13 @@ LU_Decomposition::~LU_Decomposition() {
 }
 
 // Ищет максимальный по модулю ведущий элемент в текущем столбце
-int LU_Decomposition::neededrow(int skip) const {
-  double mx = std::abs(U[skip * n + skip]);
+template <class T>
+int LU_Decomposition<T>::neededrow(int skip) const {
+  T mx = std::abs(U[skip * n + skip]);
   int numrow = skip;
 
   for (int i = skip + 1; i < n; i++) {
-    double loc = std::abs(U[i * n + skip]);
+    T loc = std::abs(U[i * n + skip]);
 
     if (loc > mx) {
       mx = loc;
@@ -57,7 +64,8 @@ int LU_Decomposition::neededrow(int skip) const {
 }
 
 // Переставляет строки для устойчивости алгоритма
-void LU_Decomposition::swaprows(int step) {
+template <class T>
+void LU_Decomposition<T>::swaprows(int step) {
   int we_swap = neededrow(step);
 
   if (step == we_swap) {
@@ -78,15 +86,16 @@ void LU_Decomposition::swaprows(int step) {
 }
 
 // Вычитает строки и формирует L и U
-void LU_Decomposition::subtraction(int current) {
-  double pivot = U[current * n + current];
+template <class T>
+void LU_Decomposition<T>::subtraction(int current) {
+  T pivot = U[current * n + current];
 
-  if (std::abs(pivot) < 1e-9) {
+  if (std::abs(pivot) < 1e-9) { // 1e-9 might need cast to T though usually works
     return;
   }
 
   for (int k = current + 1; k < n; k++) {
-    double mnozh = U[k * n + current] / pivot;
+    T mnozh = U[k * n + current] / pivot;
     L[k * n + current] = mnozh;
 
     for (int j = current; j < n; j++) {
@@ -96,7 +105,8 @@ void LU_Decomposition::subtraction(int current) {
 }
 
 // Основной цикл LU-разложения
-void LU_Decomposition::decompose() {
+template <class T>
+void LU_Decomposition<T>::decompose() {
   for (int i = 0; i < n - 1; i++) {
     swaprows(i);
     subtraction(i);
@@ -104,17 +114,21 @@ void LU_Decomposition::decompose() {
 }
 
 // Возвращает матрицу L
-double *LU_Decomposition::GetL() const { return L; }
+template <class T>
+T *LU_Decomposition<T>::GetL() const { return L; }
 
 // Возвращает матрицу U
-double *LU_Decomposition::GetU() const { return U; }
+template <class T>
+T *LU_Decomposition<T>::GetU() const { return U; }
 
 // Возвращает массив перестановок
-int *LU_Decomposition::GetP() const { return P; }
+template <class T>
+int *LU_Decomposition<T>::GetP() const { return P; }
 
 // Вычисляет и возвращает определитель матрицы
-double LU_Decomposition::GetDet() const {
-  double det = 1.0;
+template <class T>
+T LU_Decomposition<T>::GetDet() const {
+  T det = T(1.0);
 
   for (int i = 0; i < n; i++) {
     det *= U[i * n + i];
@@ -128,7 +142,8 @@ double LU_Decomposition::GetDet() const {
 }
 
 // Решает СЛАУ: сначала LY = Pb, затем UX = Y
-double *LU_Decomposition::Solve(double *b) const {
+template <class T>
+T *LU_Decomposition<T>::Solve(T *b) const {
   for (int i = 0; i < n; i++) {
     y[i] = b[P[i]];
 
@@ -151,7 +166,8 @@ double *LU_Decomposition::Solve(double *b) const {
 }
 
 // Решение СЛАУ без возврата ответа (для тестов скорости)
-void LU_Decomposition::SolveForTests(double *b) const {
+template <class T>
+void LU_Decomposition<T>::SolveForTests(T *b) const {
   for (int i = 0; i < n; i++) {
     y[i] = b[P[i]];
 

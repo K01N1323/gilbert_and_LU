@@ -10,7 +10,7 @@ const int MAX_MATRICES = 20;
 
 using namespace std;
 
-static matrixes *matrices[MAX_MATRICES];
+static matrixes<double> *matrices[MAX_MATRICES];
 static int matrices_count = 0;
 
 void PrintInfo() {
@@ -25,7 +25,7 @@ void PrintInfo() {
     cout << "8 - Выйти" << endl;
 }
 
-void Print_Matrix(const matrixes *matrix) {
+void Print_Matrix(const matrixes<double> *matrix) {
     if (!matrix)
         return;
     cout << "| ";
@@ -62,7 +62,7 @@ void open_menu() {
             cout << "Введите количество строк и столбцов через пробел: ";
             cin >> r >> c;
             if (r > 0 && c > 0) {
-                matrices[matrices_count] = new matrixes(r, c);
+                matrices[matrices_count] = new matrixes<double>(r, c);
                 cout << "Матрица создана под индексом " << matrices_count
                      << endl;
                 matrices_count++;
@@ -114,7 +114,7 @@ void open_menu() {
                     cin >> b[i];
                 }
 
-                gauss_method gm(matrices[index]->GetMatrix(), n);
+                gauss_method<double> gm(matrices[index]->GetMatrix(), n);
 
                 double *x = gm.Solve(b);
                 if (x) {
@@ -151,7 +151,7 @@ void open_menu() {
                     cin >> b[i];
                 }
 
-                LU_Decomposition lu(matrices[index]->GetMatrix(), n);
+                LU_Decomposition<double> lu(matrices[index]->GetMatrix(), n);
                 double det = lu.GetDet();
                 if (std::abs(det) < 1e-9) {
                     cout << "ОШИБКА: Матрица вырождена (определитель близок к "

@@ -3,27 +3,29 @@
 #include <vector>
 
 // Конструктор метода Гаусса с выбором ведущего элемента
-gauss_method::gauss_method(double *m, int n) {
-    matrix = new double[n * n];
-    conmatrix = new double[n * n];
+template <class T>
+gauss_method<T>::gauss_method(T *m, int n) {
+    matrix = new T[n * n];
+    conmatrix = new T[n * n];
     this->n = n;
-    this->det = 1.0;
+    this->det = T(1.0);
     this->swaps = 0;
 
     for (int i = 0; i < (this->n) * (this->n); i++)
-        this->matrix[i] = *(m + i);
+        this->matrix[i] = m[i];
 
     for (int i = 0; i < (this->n) * (this->n); i++) {
-        *(conmatrix + i) = 0.;
+        conmatrix[i] = T(0.0);
     }
 
     for (int i = 0; i < (this->n); i++) {
-        *(conmatrix + n * i + i) = 1.;
+        conmatrix[n * i + i] = T(1.0);
     }
 }
 
 // Деструктор
-gauss_method::~gauss_method() {
+template <class T>
+gauss_method<T>::~gauss_method() {
     if (matrix) {
         delete[] matrix;
         matrix = nullptr;
@@ -34,20 +36,22 @@ gauss_method::~gauss_method() {
 }
 
 // Возвращает знак определителя в зависимости от перестановок
-double gauss_method::GetDet() const {
+template <class T>
+T gauss_method<T>::GetDet() const {
     if (swaps % 2 == 0)
         return det;
     else
-        return -1 * det;
+        return T(-1.0) * det;
 }
 
 // Ищет максимальный по модулю элемент в столбце для устойчивости
-int gauss_method::neededrow(int skip) const { // по дефолту скип равен нулю
-    double loc, mx = std::abs(*(matrix + skip * n + skip));
+template <class T>
+int gauss_method<T>::neededrow(int skip) const { // по дефолту скип равен нулю
+    T loc, mx = std::abs(matrix[skip * n + skip]);
     int numrow = skip;
 
     for (int i = skip; i < n; i++) {
-        loc = std::abs(*(matrix + n * i + skip));
+        loc = std::abs(matrix[n * i + skip]);
         if (loc > mx) {
             mx = loc;
             numrow = i;
@@ -58,10 +62,11 @@ int gauss_method::neededrow(int skip) const { // по дефолту скип р
 }
 
 // Переставляет строки так, чтобы ведущий элемент был сверху
-void gauss_method::swaprows(int we_swap1) {
+template <class T>
+void gauss_method<T>::swaprows(int we_swap1) {
     int we_swap = neededrow(we_swap1);
-    std::vector<double> loc(n);
-    std::vector<double> loccon(n);
+    std::vector<T> loc(n);
+    std::vector<T> loccon(n);
 
     swaps++;
 
@@ -69,57 +74,59 @@ void gauss_method::swaprows(int we_swap1) {
         return;
 
     for (int i = 0; i < n; i++) {
-        loc[i] = *(matrix + we_swap1 * n + i);
-        loccon[i] = *(conmatrix + we_swap1 * n + i);
+        loc[i] = matrix[we_swap1 * n + i];
+        loccon[i] = conmatrix[we_swap1 * n + i];
     }
 
     for (int i = 0; i < n; i++) {
-        *(matrix + we_swap1 * n + i) = *(matrix + we_swap * n + i);
-        *(matrix + we_swap * n + i) = loc[i];
-        *(conmatrix + we_swap1 * n + i) = *(conmatrix + we_swap * n + i);
-        *(conmatrix + we_swap * n + i) = loccon[i];
+        matrix[we_swap1 * n + i] = matrix[we_swap * n + i];
+        matrix[we_swap * n + i] = loc[i];
+        conmatrix[we_swap1 * n + i] = conmatrix[we_swap * n + i];
+        conmatrix[we_swap * n + i] = loccon[i];
     }
 }
 
 // Делит текущую строку на ведущий элемент, делая его равным 1
-void gauss_method::divisionrow(int num) {
-    double el = *(matrix + n * num + num);
+template <class T>
+void gauss_method<T>::divisionrow(int num) {
+    T el = matrix[n * num + num];
 
-    if (el == 0) {
-        det = 0.;
-        ;
+    if (el == T(0)) {
+        det = T(0);
         return;
     }
 
     det *= el;
 
     for (int i = 0; i < n; i++) {
-        *(matrix + n * num + i) /= el;
-        *(conmatrix + n * num + i) /= el;
+        matrix[n * num + i] /= el;
+        conmatrix[n * num + i] /= el;
     }
 }
 
 // Вычитает текущую строку из всех последующих, обнуляя элементы под ведущим
-void gauss_method::subtraction(int current) {
-    std::vector<double> loc(n);
-    std::vector<double> loccon(n);
+template <class T>
+void gauss_method<T>::subtraction(int current) {
+    std::vector<T> loc(n);
+    std::vector<T> loccon(n);
 
     for (int i = 0; i < n; i++) {
-        loc[i] = *(matrix + current * n + i);
-        loccon[i] = *(conmatrix + current * n + i);
+        loc[i] = matrix[current * n + i];
+        loccon[i] = conmatrix[current * n + i];
     }
 
     for (int k = (current + 1); k < n; k++) {
-        double mnozh = *(matrix + k * n + current);
+        T mnozh = matrix[k * n + current];
         for (int i = 0; i < n; i++) {
-            *(matrix + k * n + i) -= mnozh * loc[i];
-            *(conmatrix + k * n + i) -= mnozh * loccon[i];
+            matrix[k * n + i] -= mnozh * loc[i];
+            conmatrix[k * n + i] -= mnozh * loccon[i];
         }
     }
 }
 
 // Прямой ход Гаусса: приведение матрицы к верхнетреугольному виду
-void gauss_method::triangle() {
+template <class T>
+void gauss_method<T>::triangle() {
     int skip = -1;
     for (int i = 0; i < n; i++) {
         skip++;
@@ -130,28 +137,31 @@ void gauss_method::triangle() {
 }
 
 // Обратный ход Гаусса: нахождение корней (или обратной матрицы)
-void gauss_method::obrat() {
-    double koof;
+template <class T>
+void gauss_method<T>::obrat() {
+    T koof;
 
     for (int i = (n - 1); i >= 0; i--) {
         for (int k = (i - 1); k >= 0; k--) {
-            koof = *(matrix + n * k + i);
+            koof = matrix[n * k + i];
             for (int j = 0; j < n; j++) {
-                *(conmatrix + n * k + j) -= koof * (*(conmatrix + n * i + j));
-                *(matrix + n * k + j) -= koof * (*(matrix + n * i + j));
+                conmatrix[n * k + j] -= koof * conmatrix[n * i + j];
+                matrix[n * k + j] -= koof * matrix[n * i + j];
             }
         }
     }
 }
 
 // Полный процесс метода Гаусса (прямой + обратный ход)
-void gauss_method::reverse() {
+template <class T>
+void gauss_method<T>::reverse() {
     triangle();
     obrat();
 }
 
 // Решает СЛАУ для вектора b и возвращает вектор x
-double *gauss_method::Solve(double *b) {
+template <class T>
+T *gauss_method<T>::Solve(T *b) {
     for (int i = 0; i < n; i++) {
         conmatrix[n * i] = b[i];
     }
@@ -159,7 +169,7 @@ double *gauss_method::Solve(double *b) {
     triangle();
     obrat();
 
-    double *result = new double[n];
+    T *result = new T[n];
 
     for (int i = 0; i < n; i++) {
         result[i] = conmatrix[n * i];
@@ -169,7 +179,8 @@ double *gauss_method::Solve(double *b) {
 }
 
 // Решение СЛАУ без выделения памяти под ответ (для ускорения тестов)
-void gauss_method::SolveForTests(double *b) {
+template <class T>
+void gauss_method<T>::SolveForTests(T *b) {
     for (int i = 0; i < n; i++) {
         conmatrix[n * i] = b[i];
     }
@@ -179,10 +190,14 @@ void gauss_method::SolveForTests(double *b) {
 }
 
 // Инкапсулирует вызов reverse()
-void gauss_method::TakeReverse() { reverse(); }
+template <class T>
+void gauss_method<T>::TakeReverse() { reverse(); }
 
 // Геттеры для матрицы и её элементов
-double *gauss_method::GetMatrix() const { return this->conmatrix; }
-double gauss_method::GetElement(int i, int j) const {
+template <class T>
+T *gauss_method<T>::GetMatrix() const { return this->conmatrix; }
+
+template <class T>
+T gauss_method<T>::GetElement(int i, int j) const {
     return matrix[n * i + j];
 }

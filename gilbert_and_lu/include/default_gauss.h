@@ -1,21 +1,25 @@
 #ifndef DEFAULT_GAUSS_H
 #define DEFAULT_GAUSS_H
+
+template <class T> class matrixes;
+
+template <class T>
 class default_gauss {
   public:
-    friend class matrixes;
-    default_gauss(double *, int);
-    double *GetMatrix() const;
-    double GetDet() const;
+    friend class matrixes<T>;
+    default_gauss(T *, int);
+    T *GetMatrix() const;
+    T GetDet() const;
     void TakeReverse();
     ~default_gauss();
-    double *Solve(double *b);
-    void SolveForTests(double *b);
+    T *Solve(T *b);
+    void SolveForTests(T *b);
 
   private:
     int n;
-    double *matrix;
-    double *conmatrix;
-    int det;
+    T *matrix;
+    T *conmatrix;
+    T det;
     int swaps;
     int neededrow(int skip) const;
     void swaprows(int);
@@ -24,6 +28,9 @@ class default_gauss {
     void triangle();
     void obrat();
     void reverse();
-    double GetElement(int, int) const;
+    T GetElement(int, int) const;
 };
+
+#include "../src/default_gauss.tpp"
+
 #endif // default gauss h

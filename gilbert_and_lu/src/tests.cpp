@@ -18,7 +18,7 @@ struct ExecutionTime {
 // Замеряет время решения случайной СЛАУ методом Гаусса без ведущего элемента
 double Solve_with_default_gauss(int n) {
 
-    matrixes Matrix(n, n);
+    matrixes<double> Matrix(n, n);
     Matrix.MakeRandomNormal();
 
     double *b = new double[n];
@@ -31,7 +31,7 @@ double Solve_with_default_gauss(int n) {
         b[i] = dis(gen);
     }
 
-    default_gauss Matrix_for_gauss(Matrix.GetMatrix(), n);
+    default_gauss<double> Matrix_for_gauss(Matrix.GetMatrix(), n);
 
     auto start_gauss = std::chrono::high_resolution_clock::now();
     Matrix_for_gauss.SolveForTests(b);
@@ -46,7 +46,7 @@ double Solve_with_default_gauss(int n) {
 // Замеряет время решения СЛАУ методом Гаусса с ведущим элементом
 double Solve_with_gauss(int n) {
 
-    matrixes Matrix(n, n);
+    matrixes<double> Matrix(n, n);
     Matrix.MakeRandomNormal();
 
     double *b = new double[n];
@@ -59,7 +59,7 @@ double Solve_with_gauss(int n) {
         b[i] = dis(gen);
     }
 
-    gauss_method Matrix_for_gauss(Matrix.GetMatrix(), n);
+    gauss_method<double> Matrix_for_gauss(Matrix.GetMatrix(), n);
 
     auto start_gauss = std::chrono::high_resolution_clock::now();
     Matrix_for_gauss.SolveForTests(b);
@@ -73,7 +73,7 @@ double Solve_with_gauss(int n) {
 
 // Раздельно замеряет время факторизации и решения для метода LU-разложения
 ExecutionTime Solve_with_LU(int n) {
-    matrixes Matrix(n, n);
+    matrixes<double> Matrix(n, n);
     Matrix.MakeRandomNormal();
 
     double *b = new double[n];
@@ -87,7 +87,7 @@ ExecutionTime Solve_with_LU(int n) {
     }
 
     auto start_lu = std::chrono::high_resolution_clock::now();
-    LU_Decomposition Matrix_for_LU(Matrix.GetMatrix(), n);
+    LU_Decomposition<double> Matrix_for_LU(Matrix.GetMatrix(), n);
     auto end_lu = std::chrono::high_resolution_clock::now();
 
     auto start_solve = std::chrono::high_resolution_clock::now();
@@ -108,13 +108,13 @@ ExecutionTime Solving_immutable_b(int k) {
     double summ_time_for_lu = 0;
     int n = 500;
 
-    matrixes matrix(n, n);
+    matrixes<double> matrix(n, n);
     matrix.MakeRandomNormal();
 
-    gauss_method matrix_for_gauss(matrix.GetMatrix(), n);
+    gauss_method<double> matrix_for_gauss(matrix.GetMatrix(), n);
 
     auto start_lu_decompoze = std::chrono::high_resolution_clock::now();
-    LU_Decomposition matrix_for_LU(matrix.GetMatrix(), n);
+    LU_Decomposition<double> matrix_for_LU(matrix.GetMatrix(), n);
     auto end_lu_decompoze = std::chrono::high_resolution_clock::now();
 
     summ_time_for_lu += (end_lu_decompoze - start_lu_decompoze).count();
@@ -152,7 +152,7 @@ ExecutionTime Solving_immutable_b(int k) {
 
 // Тестирование погрешностей для матрицы Гильберта обычным Гауссом
 ExecutionTime Gilbert_tests_for_default_gauss(int n) {
-    matrixes matrix(n, n);
+    matrixes<double> matrix(n, n);
     matrix.MakeGilbert();
 
     static std::random_device rd;
@@ -169,7 +169,7 @@ ExecutionTime Gilbert_tests_for_default_gauss(int n) {
         }
     }
 
-    default_gauss matrix_for_gauss(matrix.GetMatrix(), n);
+    default_gauss<double> matrix_for_gauss(matrix.GetMatrix(), n);
     double *x = matrix_for_gauss.Solve(b);
 
     double result_for_normal = 0;
@@ -197,7 +197,7 @@ ExecutionTime Gilbert_tests_for_default_gauss(int n) {
 
 // Тестирование погрешностей для матрицы Гильберта Гауссом с ведущим элементом
 ExecutionTime Gilbert_tests_for_gauss(int n) {
-    matrixes matrix(n, n);
+    matrixes<double> matrix(n, n);
     matrix.MakeGilbert();
 
     static std::random_device rd;
@@ -214,7 +214,7 @@ ExecutionTime Gilbert_tests_for_gauss(int n) {
         }
     }
 
-    gauss_method matrix_for_gauss(matrix.GetMatrix(), n);
+    gauss_method<double> matrix_for_gauss(matrix.GetMatrix(), n);
     double *x = matrix_for_gauss.Solve(b);
 
     double result_for_normal = 0;
@@ -242,7 +242,7 @@ ExecutionTime Gilbert_tests_for_gauss(int n) {
 
 // Тестирование погрешностей для матрицы Гильберта LU-разложением
 ExecutionTime Gilbert_tests_for_lu(int n) {
-    matrixes matrix(n, n);
+    matrixes<double> matrix(n, n);
     matrix.MakeGilbert();
 
     static std::random_device rd;
@@ -259,7 +259,7 @@ ExecutionTime Gilbert_tests_for_lu(int n) {
         }
     }
 
-    LU_Decomposition matrix_for_lu(matrix.GetMatrix(), n);
+    LU_Decomposition<double> matrix_for_lu(matrix.GetMatrix(), n);
     double *x = matrix_for_lu.Solve(b);
 
     double result_for_normal = 0;
