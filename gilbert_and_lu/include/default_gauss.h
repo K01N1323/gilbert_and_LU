@@ -31,6 +31,6 @@ class default_gauss {
     T GetElement(int, int) const;
 };
 
-#include "../src/default_gauss.tpp"
+#include "default_gauss.tpp"
 
-#endif // default gauss h
+#endif // DEFAULT_GAUSS_H
